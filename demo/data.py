@@ -25,7 +25,7 @@ def make_batch(task, batch_size, seq_len, rng=None, **kwargs):
     echo:   目标是回溯序列中更早的字符。两个坐标系注意区分：
             「预测下一字符」视角：y[t] = seq[t+1] 的前 d 个字符处，即 seq[t+1-d]
             「y 对比 x」视角：    y[t] = x[t-(d-1)]，即偏移 d-1 步
-            （attention 图按后者画，inspect.py 中的偏移 = distance - 1）
+            （attention 图按后者画，plot_attention.py 中的偏移 = distance - 1）
     中间隔着随机字符，bigram 命中率仅 1/26，必须靠 attention 回溯
     """
     rng = rng or random.Random()
@@ -79,4 +79,5 @@ if __name__ == "__main__":
         for row in x:
             print("  x:", "".join(itos[i.item()] for i in row))
         for row in y:
-            print("  y:", "".join(itos[i.item()] for i in row))
+            # echo 的前 distance-1 个目标是 -100（ignore_index），不能直接查表
+            print("  y:", "".join(itos[i.item()] if i.item() >= 0 else "?" for i in row))

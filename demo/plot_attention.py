@@ -1,7 +1,7 @@
 """注意力可视化：加载 checkpoint，画注意力热力图。
 
 用法：
-    python inspect.py --checkpoint checkpoint.pt
+    python plot_attention.py --checkpoint checkpoint.pt
 """
 import argparse
 import random

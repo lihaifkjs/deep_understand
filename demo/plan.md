@@ -19,7 +19,7 @@ demo/
 │   └── echo()         # 阶段二：回声任务
 ├── model.py           # 模型定义
 ├── train.py           # 训练循环 + loss 曲线
-├── inspect.py         # 注意力图可视化（阶段二用）
+├── plot_attention.py  # 注意力图可视化（阶段二用；不能叫 inspect.py，会遮蔽标准库）
 ├── trace.py           # 因果追踪：破坏-恢复，定位答案来自哪一层/哪个位置
 └── README.md          # 运行说明 + 每个部件的 shape 速查
 ```
@@ -125,3 +125,8 @@ GPT 风格 decoder-only，按依赖顺序：
   分母 `p_clean - p_corrupt ≈ 0`，恢复率变成噪声比。`trace.py` 会在破坏后准确率 >0.9 时告警；
   默认 2.0（论文用 3，但单点恢复救不回来，对角恢复率被压到 0.2 量级）。
 - **matplotlib 中文字形**：默认 DejaVu Sans 无 CJK，图内中文渲染成方框。图内用英文，中文只留在注释/终端。
+- **本地文件遮蔽标准库**：可视化脚本原名 `inspect.py`，与标准库 `inspect` 同名；直接运行本目录脚本时
+  `sys.path[0]` 是本目录，torch 启动时 `import inspect` 会拿到本地文件，报
+  `ImportError: cannot import name 'Parameter' from partially initialized module 'inspect'`。
+  已改名为 `plot_attention.py`。以后新增脚本避开标准库模块名（现有 `trace.py` 也撞了标准库 `trace`，
+  只是启动路径不 import 它，暂未触发；真撞上就同样改名）。

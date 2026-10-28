@@ -4,7 +4,15 @@
 
 ## 环境
 
-PyTorch（开发用的是 conda 环境 `myllm`：torch 2.11 + CUDA）+ matplotlib。
+PyTorch + matplotlib。原开发机是 conda 环境 `myllm`（torch 2.11 + CUDA）；
+本机（macOS arm64，无 CUDA）用仓库根目录的 `.venv`（Python 3.9 + torch 2.8 CPU，
+`--system-site-packages` 复用 user site 里已装的 torch/numpy/matplotlib）：
+
+```bash
+source .venv/bin/activate     # 之后 python / pip 指向该环境
+```
+
+依赖缺失时：`python -m pip install torch matplotlib`。`train.py` 无 CUDA 时自动用 CPU。
 
 ## 文件
 
@@ -13,7 +21,7 @@ PyTorch（开发用的是 conda 环境 `myllm`：torch 2.11 + CUDA）+ matplotli
 | `data.py` | 数据生成，唯一会随阶段更换的部分（`caesar` / `echo`） |
 | `model.py` | 模型：sin/cos 位置编码 + 单头因果注意力 + post-norm 块 |
 | `train.py` | 训练循环 + loss 曲线 + 抽查预测 |
-| `inspect.py` | 注意力热力图 |
+| `plot_attention.py` | 注意力热力图 |
 | `trace.py` | 因果追踪（破坏-恢复），定位答案来自哪一层/哪个位置 |
 
 ## 运行
@@ -23,7 +31,7 @@ python data.py                                      # 冒烟：看两个任务�
 python model.py                                     # 形状自检 + 参数量
 python train.py --task caesar --steps 2000          # 阶段一：loss 应降到 ≈0
 python train.py --task echo    --steps 4000         # 阶段二
-python inspect.py --checkpoint ckpt_echo.pt         # 画注意力图（双层对比）
+python plot_attention.py --checkpoint ckpt_echo.pt  # 画注意力图（双层对比）
 python trace.py --checkpoint ckpt_caesar.pt        # 因果追踪：答案在哪一层/哪个位置
 python trace.py --checkpoint ckpt_echo.pt          # 对照：任务本身需要搬运时矩阵怎么变
 ```
